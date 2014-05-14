@@ -1,4 +1,4 @@
-package de.unikoblenz.west.lkastler.rdfsimplestore;
+package de.unikoblenz.west.lkastler.rdfsimplestore.structure;
 
 /**
  * resembles an RDF triple
@@ -8,9 +8,9 @@ package de.unikoblenz.west.lkastler.rdfsimplestore;
  */
 public class Triple {
 
-	private String subject = null;
-	private String predicate = null;
-	private String object = null;
+	private Term subject = null;
+	private Term predicate = null;
+	private Term object = null;
 	
 	/**
 	 * 
@@ -20,16 +20,16 @@ public class Triple {
 	 */
 	public Triple(String subject, String predicate, String object) {
 		super();
-		this.subject = subject;
-		this.predicate = predicate;
-		this.object = object;
+		this.subject = new Term(subject);
+		this.predicate = new Term(predicate);
+		this.object = new Term(object);
 	}
 
 	/**
 	 * returns the subject of this RDF triple.
 	 * @return the subject of this RDF triple.
 	 */
-	public String getSubject() {
+	public Term getSubject() {
 		return subject;
 	}
 
@@ -37,7 +37,7 @@ public class Triple {
 	 * returns the predicate of this RDF triple.
 	 * @return the predicate of this RDF triple.
 	 */
-	public String getPredicate() {
+	public Term getPredicate() {
 		return predicate;
 	}
 
@@ -45,7 +45,7 @@ public class Triple {
 	 * returns the object of this RDF triple.
 	 * @return the object of this RDF triple.
 	 */
-	public String getObject() {
+	public Term getObject() {
 		return object;
 	}
 

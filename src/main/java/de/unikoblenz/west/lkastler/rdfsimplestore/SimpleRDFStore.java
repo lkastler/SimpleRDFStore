@@ -1,9 +1,24 @@
 package de.unikoblenz.west.lkastler.rdfsimplestore;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import de.unikoblenz.west.lkastler.rdfsimplestore.exceptions.EvaluationException;
+import de.unikoblenz.west.lkastler.rdfsimplestore.exceptions.ParsingException;
+import de.unikoblenz.west.lkastler.rdfsimplestore.exceptions.StorageException;
+import de.unikoblenz.west.lkastler.rdfsimplestore.query.BasicGraphPattern;
+import de.unikoblenz.west.lkastler.rdfsimplestore.query.QueryEngine;
+import de.unikoblenz.west.lkastler.rdfsimplestore.query.Mappings;
+import de.unikoblenz.west.lkastler.rdfsimplestore.query.TriplePattern;
+import de.unikoblenz.west.lkastler.rdfsimplestore.query.impl.SimpleQueryEngine;
+import de.unikoblenz.west.lkastler.rdfsimplestore.storage.Storage;
+import de.unikoblenz.west.lkastler.rdfsimplestore.storage.impl.TableStorage;
+import de.unikoblenz.west.lkastler.rdfsimplestore.structure.Term;
+import de.unikoblenz.west.lkastler.rdfsimplestore.structure.Token;
+import de.unikoblenz.west.lkastler.rdfsimplestore.structure.Triple;
+import de.unikoblenz.west.lkastler.rdfsimplestore.structure.Variable;
 
 /**
  * stores RDF and query it via Basic Graph Patterns. 
@@ -14,156 +29,70 @@ public class SimpleRDFStore {
 	
 	private Logger log =  LogManager.getLogger();
 	
-	RDFIndex spo = new RDFIndex();
-	RDFIndex sop = new RDFIndex();
-	RDFIndex pso = new RDFIndex();
-	RDFIndex pos = new RDFIndex();
-	RDFIndex osp = new RDFIndex();
-	RDFIndex ops = new RDFIndex();
+	private Storage store;
+	private QueryEngine engine;
 	
-	public SimpleRDFStore() {}
-	
-	public void add(String subject, String predicate, String object) {
-		synchronized (this) {
-			spo.add(subject, predicate, object);
-			sop.add(subject, object, predicate);
-			pso.add(predicate, subject, object);
-			pos.add(predicate, object, subject);
-			osp.add(object, subject, predicate);
-			ops.add(object, predicate, subject);
-		}
+	public SimpleRDFStore() {
+		store = new TableStorage();
+		
+		ArrayList<Storage> stores = new ArrayList<Storage>();
+		stores.add(store);
+		
+		engine = new SimpleQueryEngine(stores);
 	}
 	
-	public String query(String query) throws SparqlEvaluationException {
-		log.debug("query=" + query);
-		
-		String[] triplePatterns = query.split("\\.");
-				
-		StringBuffer b = new StringBuffer();
-		
-		for(String r: triplePatterns) {
-			log.debug(r);
-			b.append(evaluateTriplePattern(r));
-		}
-		
-		return b.toString();
-	}
-	
-	private String evaluateBasicGraphPattern(String query) throws SparqlEvaluationException {
-		throw new SparqlEvaluationException(query);
-	}
-	
-	private String evaluateTriplePattern(String query) throws SparqlEvaluationException {
-		String[] r = query.trim().split(" ");
-		
-		if(r.length == 3) {
-						
-			String s = r[0];
-			String p = r[1];
-			String o = r[2];
+	/**
+	 * adds String represented RDF triples to this SimpleRDFStore.
+	 * 
+	 * @param triples - Strings of RDF triples.
+	 * @throws StorageException - thrown if Triple could not be stored.
+	 * @throws ParsingException - thrown if String represented RDF triples could not be parsed.
+	 */
+	public void add(String... triples) throws StorageException, ParsingException {
+		log.debug("storing: " + triples);
+		for(String t : triples) {
+			String[] tokens = t.trim().split(" ");
 			
-			log.debug("s=" + s +"; p=" + p + "; o=" + o);
-			
-			if(s.startsWith("?")) {
-				if(p.startsWith("?")) {
-					if(o.startsWith("?")) {
-						// ? ? ?
-						StringBuffer b = new StringBuffer();
-						for(String _s : spo.keySet()) {
-							for(String _p: spo.get(_s).keySet()) {
-								b.append(tripleToString(_s, _p, spo.get(_s).get(_p)));
-							}
-						}
-						return b.toString();
-					}
-					else {
-						// ? ? o
-						if(ops.containsKey(o)) {
-							StringBuffer b = new StringBuffer();
-							for(String _s: osp.get(o).keySet()) {
-								b.append(tripleToString(_s, osp.get(o).get(_s), o));
-							}
-							return b.toString();
-						}
-					}
-				}
-				else {
-					if(o.startsWith("?")) {
-						// ? p ?
-						if(pso.containsKey(p)) {
-							StringBuffer b = new StringBuffer();
-							for(String _s : pso.get(p).keySet()) {
-								b.append(tripleToString(_s, p, pso.get(p).get(_s)));
-							}
-							return b.toString();
-						}						
-					}
-					else {
-						// ? p o
-						if(pos.containsKey(p) && pos.get(p).containsKey(o)) {
-							return tripleToString(pos.get(p).get(o), p, o);
-						}
-					}
-				}
+			if(tokens.length == 3) {
+				store.add(new Triple(tokens[0].trim(), tokens[1].trim(), tokens[2].trim()));
 			}
 			else {
-				if(p.startsWith("?")) {
-					if(o.startsWith("?")) {
-						// s ? ?
-						if(spo.containsKey(s)) {
-							StringBuffer b = new StringBuffer();
-							for(String _p : spo.get(s).keySet()) {
-								b.append(tripleToString(s, _p, spo.get(s).get(_p)));
-							}
-							
-							return b.toString();
-						}
-					}
-					else {
-						// s ? o
-						if(spo.containsKey(s) && sop.get(s).containsKey(o)) {
-							return tripleToString(s, sop.get(s).get(o), o);
-						}
-					}
-				}
-				else {
-					if(o.startsWith("?")) {
-						// s p ?
-						if(spo.containsKey(s) && spo.get(s).containsKey(p)) {
-							return tripleToString(s, p, spo.get(s).get(p));
-						}
-					}
-					else {
-						// s p o
-						if(spo.containsKey(s) && spo.get(s).containsKey(p) && spo.get(s).get(p).equals(o)) {
-							return tripleToString(s, p, o);
-						}
-						
-					}
-				}
-			}
-			return "";
-		} else {
-			throw new SparqlEvaluationException("triple pattern wrong size: " + Arrays.toString(r));
-		}
-	}
-	
-	
-	@Override
-	public String toString() {
-		
-		StringBuffer b = new StringBuffer("SimpleRDFStore[");
-		
-		for(String s : spo.keySet()) {
-			for(String p: spo.get(s).keySet()) {
-				b.append(tripleToString(s, p, spo.get(s).get(p)));
+				throw new ParsingException("triple could not be parsed: " + t);
 			}
 		}
 		
-		return b.append("]").toString();
+		
 	}
 	
-	private String tripleToString(String subject, String predicate, String object) {
-		return subject + " " + predicate + " " + object + ".";
+	/**
+	 * queries this SimpleRDFStore and recieves a set of solutions.
+	 * 
+	 * @param query - String representation of an basic graph pattern.
+	 * @return Solutions for the given query String.
+	 * @throws EvaluationException - notifying if evaluation went wrong.
+	 * @throws ParsingException - notifying if parsing went wrong.
+	 */
+	public Mappings query(String query) throws EvaluationException, ParsingException {
+		log.debug("evaluating: " + query);
+		
+		String[] triplePatterns = query.trim().split("\\.");
+		
+		BasicGraphPattern bgp = new BasicGraphPattern();
+		
+		for(String t : triplePatterns) {
+			String[] tokens = t.trim().split(" ");
+			
+			if(tokens.length != 3) {
+				throw new ParsingException("not able to parse triple pattern: " + t);
+			}
+			
+			Token s = tokens[0].startsWith("?") ? new Variable(tokens[0]) : new Term(tokens[0]);
+			Token p = tokens[0].startsWith("?") ? new Variable(tokens[1]) : new Term(tokens[1]);
+			Token o = tokens[0].startsWith("?") ? new Variable(tokens[2]) : new Term(tokens[2]);
+			
+			bgp.add(new TriplePattern(s, p, o));
+		}
+		
+		return engine.query(bgp);
 	}
 }
