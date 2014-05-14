@@ -5,6 +5,11 @@ import java.util.Arrays;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * stores RDF and query it via Basic Graph Patterns. 
+ * 
+ * @author lkastler
+ */
 public class SimpleRDFStore {
 	
 	private Logger log =  LogManager.getLogger();
