@@ -7,7 +7,6 @@ import de.unikoblenz.west.lkastler.rdfsimplestore.exceptions.StorageException;
 import de.unikoblenz.west.lkastler.rdfsimplestore.query.BasicGraphPattern;
 import de.unikoblenz.west.lkastler.rdfsimplestore.query.Query;
 import de.unikoblenz.west.lkastler.rdfsimplestore.query.QueryEngine;
-import de.unikoblenz.west.lkastler.rdfsimplestore.query.Mappings;
 import de.unikoblenz.west.lkastler.rdfsimplestore.query.TriplePattern;
 import de.unikoblenz.west.lkastler.rdfsimplestore.storage.Storage;
 import de.unikoblenz.west.lkastler.rdfsimplestore.structure.Term;
@@ -54,7 +53,7 @@ public class TableStorage implements Storage, QueryEngine {
 	 * (non-Javadoc)
 	 * @see de.unikoblenz.west.lkastler.rdfsimplestore.query.QueryEngine#query(de.unikoblenz.west.lkastler.rdfsimplestore.query.Query)
 	 */
-	public Mappings query(Query query) throws EvaluationException {
+	public MappingsImpl query(Query query) throws EvaluationException {
 		if(query instanceof TriplePattern) {
 			return query((TriplePattern)query);
 		}
@@ -62,7 +61,7 @@ public class TableStorage implements Storage, QueryEngine {
 		if(query instanceof BasicGraphPattern) {
 			BasicGraphPattern bgp = (BasicGraphPattern)query;
 			
-			Mappings map = new Mappings();
+			MappingsImpl map = new MappingsImpl();
 			
 			for(TriplePattern p : bgp) {
 				map.addAll(query(p));
@@ -75,7 +74,7 @@ public class TableStorage implements Storage, QueryEngine {
 		throw new EvaluationException("not supported");
 	}
 	
-	private Mappings query(TriplePattern query) throws EvaluationException {
+	private MappingsImpl query(TriplePattern query) throws EvaluationException {
 		throw new EvaluationException("not supported");
 	}
 }

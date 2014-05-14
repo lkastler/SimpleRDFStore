@@ -8,11 +8,11 @@ import org.apache.logging.log4j.Logger;
 import de.unikoblenz.west.lkastler.rdfsimplestore.exceptions.EvaluationException;
 import de.unikoblenz.west.lkastler.rdfsimplestore.exceptions.ParsingException;
 import de.unikoblenz.west.lkastler.rdfsimplestore.exceptions.StorageException;
+import de.unikoblenz.west.lkastler.rdfsimplestore.impl.MappingsImpl;
 import de.unikoblenz.west.lkastler.rdfsimplestore.impl.SimpleQueryEngine;
 import de.unikoblenz.west.lkastler.rdfsimplestore.impl.TableStorage;
 import de.unikoblenz.west.lkastler.rdfsimplestore.query.BasicGraphPattern;
 import de.unikoblenz.west.lkastler.rdfsimplestore.query.QueryEngine;
-import de.unikoblenz.west.lkastler.rdfsimplestore.query.Mappings;
 import de.unikoblenz.west.lkastler.rdfsimplestore.query.TriplePattern;
 import de.unikoblenz.west.lkastler.rdfsimplestore.storage.Storage;
 import de.unikoblenz.west.lkastler.rdfsimplestore.structure.Term;
@@ -72,7 +72,7 @@ public class SimpleRDFStore {
 	 * @throws EvaluationException - notifying if evaluation went wrong.
 	 * @throws ParsingException - notifying if parsing went wrong.
 	 */
-	public Mappings query(String query) throws EvaluationException, ParsingException {
+	public MappingsImpl query(String query) throws EvaluationException, ParsingException {
 		log.debug("evaluating: " + query);
 		
 		String[] triplePatterns = query.trim().split("\\.");

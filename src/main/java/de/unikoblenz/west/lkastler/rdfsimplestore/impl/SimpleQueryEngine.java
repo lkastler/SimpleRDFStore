@@ -6,7 +6,6 @@ import java.util.List;
 import de.unikoblenz.west.lkastler.rdfsimplestore.exceptions.EvaluationException;
 import de.unikoblenz.west.lkastler.rdfsimplestore.query.Query;
 import de.unikoblenz.west.lkastler.rdfsimplestore.query.QueryEngine;
-import de.unikoblenz.west.lkastler.rdfsimplestore.query.Mappings;
 import de.unikoblenz.west.lkastler.rdfsimplestore.storage.Storage;
 
 /**
@@ -22,10 +21,10 @@ public class SimpleQueryEngine implements QueryEngine {
 		this.storages = new ArrayList<Storage>(storages);
 	}
 	
-	public Mappings query(Query query) throws EvaluationException {
+	public MappingsImpl query(Query query) throws EvaluationException {
 		// TODO implement
 		
-		Mappings sol = new Mappings();
+		MappingsImpl sol = new MappingsImpl();
 		
 		for(Storage store : storages) {
 			sol.addAll(store.query(query));
