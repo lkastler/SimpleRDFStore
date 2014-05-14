@@ -1,4 +1,4 @@
-package de.unikoblenz.west.lkastler.rdfsimplestore.storage.impl;
+package de.unikoblenz.west.lkastler.rdfsimplestore.impl;
 
 import java.util.TreeMap;
 

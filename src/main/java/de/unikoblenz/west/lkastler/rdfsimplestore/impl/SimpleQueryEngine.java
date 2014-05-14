@@ -1,4 +1,4 @@
-package de.unikoblenz.west.lkastler.rdfsimplestore.query.impl;
+package de.unikoblenz.west.lkastler.rdfsimplestore.impl;
 
 import java.util.ArrayList;
 import java.util.List;
