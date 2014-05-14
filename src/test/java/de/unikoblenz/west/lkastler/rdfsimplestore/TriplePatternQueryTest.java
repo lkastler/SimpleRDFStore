@@ -25,42 +25,43 @@ public class TriplePatternQueryTest {
 	
 	@Test
 	public void testPattern1() throws Throwable {
-		log.debug(store.query("? ? ?."));
+		log.debug(store.query("?x ?y ?z."));
 	}
+	
 	@Test
 	public void testPattern2() throws Throwable {
 		
-		log.debug(store.query("a ? ?."));
+		log.debug(store.query("a ?y ?z."));
 	}
 	
 	@Test
 	public void testPattern3() throws Throwable {
 
-		log.debug(store.query("? b ?."));
+		log.debug(store.query("?x b ?z."));
 	}
 	
 	@Test
 	public void testPattern4() throws Throwable {
 	
-		log.debug(store.query("? ? c."));
+		log.debug(store.query("?x ?y c."));
 	}
 	
 	@Test
 	public void testPattern5() throws Throwable {
 	
-		log.debug(store.query("a b ?."));
+		log.debug(store.query("a b ?z."));
 	}
 	
 	@Test
 	public void testPattern6() throws Throwable {
 	
-		log.debug(store.query("? b c."));
+		log.debug(store.query("?x b c."));
 	}
 	
 	@Test
 	public void testPattern7() throws Throwable {
 	
-		log.debug(store.query("a ? c."));
+		log.debug(store.query("a ?y c."));
 	}
 	
 	@Test
@@ -72,42 +73,48 @@ public class TriplePatternQueryTest {
 	@Test
 	public void testPattern9() throws Throwable {
 	
-		log.debug(store.query("a x ?."));
+		log.debug(store.query("a t ?z."));
 	}
 	
 	@Test
 	public void testPattern10() throws Throwable {
 	
-		log.debug(store.query("? b x."));
+		log.debug(store.query("?x b t."));
 	}
 	
 	@Test
 	public void testPattern11() throws Throwable {
 	
-		log.debug(store.query("x ? c."));
+		log.debug(store.query("t ?y c."));
 	}
 	
 	@Test
 	public void testPattern12() throws Throwable {
 	
-		log.debug(store.query("a b x."));
+		log.debug(store.query("a b t."));
 	}	
 	
 	@Test
 	public void testPattern13() throws Throwable {
 	
-		log.debug(store.query("? x c."));
+		log.debug(store.query("?x t c."));
 	}
 	
 	@Test
 	public void testPattern14() throws Throwable {
 	
-		log.debug(store.query("a ? x."));
+		log.debug(store.query("a ?y t."));
 	}
 	
 	@Test
 	public void testPattern15() throws Throwable {
 	
-		log.debug(store.query("x b c."));
+		log.debug(store.query("t b c."));
 	}	
+	
+	@Test
+	public void testPattern16() throws Throwable {
+		log.debug(store.query("?x ?x ?x."));
+	}
+	
 }

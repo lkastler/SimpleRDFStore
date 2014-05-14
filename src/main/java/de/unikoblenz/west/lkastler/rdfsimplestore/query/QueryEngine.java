@@ -1,7 +1,6 @@
 package de.unikoblenz.west.lkastler.rdfsimplestore.query;
 
 import de.unikoblenz.west.lkastler.rdfsimplestore.exceptions.EvaluationException;
-import de.unikoblenz.west.lkastler.rdfsimplestore.impl.MappingsImpl;
 
 /**
  * defines an interface for query engines.
@@ -10,6 +9,6 @@ import de.unikoblenz.west.lkastler.rdfsimplestore.impl.MappingsImpl;
  */
 public interface QueryEngine {
 	
-	public MappingsImpl query(Query query) throws EvaluationException;
+	public Mappings query(Query query) throws EvaluationException;
 	
 }

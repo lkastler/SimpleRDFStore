@@ -53,6 +53,4 @@ public class Triple {
 	public String toString() {
 		return subject + " " + predicate + " " + object;
 	}
-	
-	
 }

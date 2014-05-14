@@ -5,9 +5,9 @@ import java.util.HashMap;
 import de.unikoblenz.west.lkastler.rdfsimplestore.exceptions.MergeException;
 import de.unikoblenz.west.lkastler.rdfsimplestore.query.Mapping;
 import de.unikoblenz.west.lkastler.rdfsimplestore.structure.Term;
-import de.unikoblenz.west.lkastler.rdfsimplestore.structure.Token;
+import de.unikoblenz.west.lkastler.rdfsimplestore.structure.Variable;
 
-public class MappingImpl extends HashMap<Token, Term> implements Mapping {
+public class MappingImpl extends HashMap<Variable, Term> implements Mapping {
 
 	private static final long serialVersionUID = 1L;
 
@@ -19,7 +19,7 @@ public class MappingImpl extends HashMap<Token, Term> implements Mapping {
 		if(other == null) {
 			return false;
 		}
-		for(Token t : other.keySet()) {
+		for(Variable t : other.keySet()) {
 			if(containsKey(t)) {
 				if(other.get(t) != get(t)) {
 					return false;

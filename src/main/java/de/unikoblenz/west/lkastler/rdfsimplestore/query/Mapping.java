@@ -4,14 +4,14 @@ import java.util.Map;
 
 import de.unikoblenz.west.lkastler.rdfsimplestore.exceptions.MergeException;
 import de.unikoblenz.west.lkastler.rdfsimplestore.structure.Term;
-import de.unikoblenz.west.lkastler.rdfsimplestore.structure.Token;
+import de.unikoblenz.west.lkastler.rdfsimplestore.structure.Variable;
 
 /**
  * returns a possible result for a given query.
  * 
  * @author lkastler
  */
-public interface Mapping extends Map<Token, Term> {
+public interface Mapping extends Map<Variable, Term> {
 	
 	/**
 	 * tests if given Mapping is compatible to this Mapping.
