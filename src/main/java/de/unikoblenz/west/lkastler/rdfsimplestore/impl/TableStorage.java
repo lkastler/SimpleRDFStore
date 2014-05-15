@@ -1,6 +1,10 @@
 package de.unikoblenz.west.lkastler.rdfsimplestore.impl;
 
 import java.util.HashMap;
+import java.util.HashSet;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import de.unikoblenz.west.lkastler.rdfsimplestore.exceptions.EvaluationException;
 import de.unikoblenz.west.lkastler.rdfsimplestore.exceptions.StorageException;
@@ -22,12 +26,14 @@ import de.unikoblenz.west.lkastler.rdfsimplestore.structure.Variable;
  */
 public class TableStorage implements Storage, QueryEngine {
 	
-	HashMap<Term, HashMap<Term, Term>> spo = new HashMap<Term, HashMap<Term, Term>>();
-	HashMap<Term, HashMap<Term, Term>> sop = new HashMap<Term, HashMap<Term, Term>>();
-	HashMap<Term, HashMap<Term, Term>> pso = new HashMap<Term, HashMap<Term, Term>>();
-	HashMap<Term, HashMap<Term, Term>> pos = new HashMap<Term, HashMap<Term, Term>>();
-	HashMap<Term, HashMap<Term, Term>> osp = new HashMap<Term, HashMap<Term, Term>>();
-	HashMap<Term, HashMap<Term, Term>> ops = new HashMap<Term, HashMap<Term, Term>>();
+	static Logger log = LogManager.getLogger();
+		
+	HashMap<Term, HashMap<Term, HashSet<Term>>> spo = new HashMap<Term, HashMap<Term, HashSet<Term>>>();
+	HashMap<Term, HashMap<Term, HashSet<Term>>> sop = new HashMap<Term, HashMap<Term, HashSet<Term>>>();
+	HashMap<Term, HashMap<Term, HashSet<Term>>> pso = new HashMap<Term, HashMap<Term, HashSet<Term>>>();
+	HashMap<Term, HashMap<Term, HashSet<Term>>> pos = new HashMap<Term, HashMap<Term, HashSet<Term>>>();
+	HashMap<Term, HashMap<Term, HashSet<Term>>> osp = new HashMap<Term, HashMap<Term, HashSet<Term>>>();
+	HashMap<Term, HashMap<Term, HashSet<Term>>> ops = new HashMap<Term, HashMap<Term, HashSet<Term>>>();
 	
 	/*
 	 * (non-Javadoc)
@@ -50,12 +56,18 @@ public class TableStorage implements Storage, QueryEngine {
 	 * @param key2 - second key.
 	 * @param value - data.
 	 */
-	private void add(HashMap<Term, HashMap<Term, Term>> table, Term key1, Term key2, Term value) {
+	private void add(HashMap<Term, HashMap<Term, HashSet<Term>>> table, Term key1, Term key2, Term value) {
 		if(!table.containsKey(key1)) {
-			table.put(key1, new HashMap<Term,Term>());
+			table.put(key1, new HashMap<Term,HashSet<Term>>());
 		}
 		
-		table.get(key1).put(key2, value);
+		HashMap<Term, HashSet<Term>> row = table.get(key1);
+		
+		if(!row.containsKey(key2)) {
+			row.put(key2, new HashSet<Term>());
+		}
+		
+		row.get(key2).add(value);
 	}
 
 	/*
@@ -89,93 +101,194 @@ public class TableStorage implements Storage, QueryEngine {
 	}
 	
 	//
-	private Mappings query(TriplePattern query) throws EvaluationException {
+	private Mappings query(TriplePattern q) throws EvaluationException {
 		Mappings result = new MappingsImpl();
 		
-		if(query.getSubject() instanceof Variable) {
-			if(query.getPredicate() instanceof Variable) {
-				if(query.getObject() instanceof Variable) {
+		if(q.getSubject() instanceof Variable) {
+			if(q.getPredicate() instanceof Variable) {
+				if(q.getObject() instanceof Variable) {
 					// ? ? ?
 					for(Term _s : spo.keySet()) {
 						for(Term _p : spo.get(_s).keySet()) {
 							Mapping map = new MappingImpl();
 							
-							map.put((Variable) query.getSubject(), _s);
-							map.put((Variable) query.getPredicate(), _p);
+							map.put((Variable) q.getSubject(), _s);
 							
-							map.put((Variable) query.getObject(), spo.get(_s).get(_p));
+							Term test = map.put((Variable) q.getPredicate(), _p);
 							
-							result.add(map);
+							if(test != null && test !=  _p) {
+								continue;
+							}
+							
+							for(Term _o : spo.get(_s).get(_p)) {
+								
+								Mapping mapping = map.clone(); 
+										
+								mapping.put((Variable)q.getObject(), _o);
+								
+								result.add(mapping);
+							}
 						}
 					}
 				}
 				else {
 					// ? ? o
-					for(Term _p : ops.get(query.getObject()).keySet()) {
-						Mapping map = new MappingImpl();
-						
-						map.put((Variable) query.getSubject(), ops.get(query.getObject()).get(_p));
-						map.put((Variable) query.getPredicate(), _p);
-													
-						result.add(map);
+					if(ops.containsKey(q.getObject())) {
+						for(Term _p : ops.get(q.getObject()).keySet()) {
+							
+							Mapping map = new MappingImpl();
+							
+							Term test = map.put((Variable) q.getPredicate(), _p);
+							
+							if(test != null && test !=  _p) {
+								continue;
+							}
+							
+							for(Term _s : ops.get(q.getObject()).get(_p)) {
+								
+								Mapping mapping = map.clone(); 
+										
+								Term test_s = mapping.put((Variable)q.getSubject(), _s);
+								
+								if(test_s != null && test_s !=  _s) {
+									continue;
+								}
+								
+								result.add(mapping);
+							}
+						}
 					}
 				}
 			}
 			else {
-				// ? p ?
-				if(query.getObject() instanceof Variable) {
-					for(Term _s : pso.get(query.getPredicate()).keySet()) {
-						Mapping map = new MappingImpl();
-						
-						map.put((Variable) query.getSubject(), _s);
-						map.put((Variable) query.getObject(), pso.get(query.getPredicate()).get(_s));
-													
-						result.add(map);
+				
+				if(q.getObject() instanceof Variable) {
+					// ? p ?
+					if(pso.containsKey(q.getPredicate())) {
+						for(Term _s : pso.get(q.getPredicate()).keySet()) {
+							Mapping map = new MappingImpl();
+							
+							Term test = map.put((Variable) q.getSubject(), _s);
+							
+							if(test != null && test !=  _s) {
+								continue;
+							}
+							
+							for(Term _o : pso.get(q.getPredicate()).get(_s)) {
+								
+								Mapping mapping = map.clone(); 
+										
+								Term test_o = mapping.put((Variable)q.getObject(), _o);
+								
+								if(test_o != null && test_o !=  _o) {
+									continue;
+								}
+								
+								result.add(mapping);
+							}
+						}
 					}
 				}				
 				else {
 					// ? p o
-					Mapping map = new MappingImpl();
-					
-					map.put((Variable) query.getSubject(), pso.get(query.getPredicate()).get(query.getObject()));
-					
-					result.add(map);
+					if(pos.containsKey(q.getPredicate()) && pos.get(q.getPredicate()).containsKey(q.getObject())) {
+						Mapping map = new MappingImpl();
+						
+						for(Term _s : pos.get(q.getPredicate()).get(q.getObject())) {
+							
+							Mapping mapping = map.clone(); 
+									
+							Term test_s = mapping.put((Variable)q.getSubject(), _s);
+							
+							if(test_s != null && test_s !=  _s) {
+								continue;
+							}
+							
+							result.add(mapping);
+						}
+					}
 				}
 			}
 		}
 		else {
-			if(query.getPredicate() instanceof Variable) {
-				if(query.getObject() instanceof Variable) {
+			if(q.getPredicate() instanceof Variable) {
+				if(q.getObject() instanceof Variable) {
 					// s ? ?
-					for(Term _p : spo.get(query.getSubject()).keySet()) {
-						Mapping map = new MappingImpl();
-						
-						map.put((Variable) query.getObject(), ops.get(query.getSubject()).get(_p));
-						map.put((Variable) query.getPredicate(), _p);
-													
-						result.add(map);
+					if(spo.containsKey(q.getSubject())) {
+						for(Term _p : spo.get(q.getSubject()).keySet()) {
+							Mapping map = new MappingImpl();
+							
+							Term test = map.put((Variable) q.getPredicate(), _p);
+							
+							if(test != null && test !=  _p) {
+								continue;
+							}
+							
+							for(Term _o : spo.get(q.getSubject()).get(_p)) {
+								
+								Mapping mapping = map.clone(); 
+										
+								Term test_o = mapping.put((Variable)q.getObject(), _o);
+								
+								if(test_o != null && test_o !=  _o) {
+									continue;
+								}
+								
+								result.add(mapping);
+							}
+					
+						}
 					}
 				}
 				else {
+					log.debug(sop.containsKey(q.getSubject()));
 					// s ? o
-					Mapping map = new MappingImpl();
-					
-					map.put((Variable) query.getPredicate(), sop.get(query.getSubject()).get(query.getObject()));
-					
-					result.add(map);
+					if(sop.containsKey(q.getSubject()) && sop.get(q.getSubject()).containsKey(q.getObject())) {
+						Mapping map = new MappingImpl();
+						
+						for(Term _p : sop.get(q.getSubject()).get(q.getObject())) {
+							
+							Mapping mapping = map.clone(); 
+									
+							Term test_p = mapping.put((Variable)q.getPredicate(), _p);
+							
+							if(test_p != null && test_p !=  _p) {
+								continue;
+							}
+							
+							result.add(mapping);
+						}
+					}
 				}
 			}
 			else {
-				if(query.getObject() instanceof Variable) {
+				if(q.getObject() instanceof Variable) {
 					// s p ?
-					Mapping map = new MappingImpl();
+					if(spo.containsKey(q.getSubject()) && spo.get(q.getSubject()).containsKey(q.getPredicate())) {
+						Mapping map = new MappingImpl();
+						
+						for(Term _o : spo.get(q.getSubject()).get(q.getPredicate())) {
+							
+							Mapping mapping = map.clone(); 
+									
+							Term test_o = mapping.put((Variable)q.getObject(), _o);
+							
+							if(test_o != null && test_o !=  _o) {
+								continue;
+							}
+							
+							result.add(mapping);
+						}
+					}
 					
-					map.put((Variable) query.getObject(), sop.get(query.getSubject()).get(query.getPredicate()));
-
-					result.add(map);
 				}
 				else {
 					// s p o
+					if(spo.containsKey(q.getSubject()) 
+							&& spo.get(q.getSubject()).containsKey(q.getPredicate()) 
+							&& spo.get(q.getSubject()).get(q.getPredicate()).contains(q.getObject())) {
+						result.add(new MappingImpl());
+					}
 				}
 			}
 		}

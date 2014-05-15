@@ -5,6 +5,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.unikoblenz.west.lkastler.rdfsimplestore.exceptions.EvaluationException;
 import de.unikoblenz.west.lkastler.rdfsimplestore.query.BasicGraphPattern;
 import de.unikoblenz.west.lkastler.rdfsimplestore.query.Mapping;
@@ -22,6 +25,8 @@ import de.unikoblenz.west.lkastler.rdfsimplestore.structure.Variable;
  */
 public class SimpleQueryEngine implements QueryEngine {
 
+	static Logger log = LogManager.getLogger();
+	
 	private ArrayList<Storage> storages;
 	
 	/**
@@ -44,6 +49,9 @@ public class SimpleQueryEngine implements QueryEngine {
 				Mappings s = store.query(query);
 				sol.addAll(s);
 			}
+			
+			log.debug("solution: " + sol);
+			
 			return sol;
 		}
 		
@@ -56,7 +64,12 @@ public class SimpleQueryEngine implements QueryEngine {
 				
 				sol.addAll(s);
 			}
-			return select(sol, getVariables((BasicGraphPattern)query));
+			
+			Mappings cleaned = select(sol, getVariables((BasicGraphPattern)query));
+					
+			log.debug("solution: " + cleaned);
+			
+			return cleaned;
 		}
 		
 		throw new EvaluationException("not supported");

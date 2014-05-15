@@ -57,7 +57,7 @@ public class Term implements Token {
 	 */
 	@Override
 	public String toString() {
-		return name;
+		return "[" + name + "]";
 	}	
 	
 }

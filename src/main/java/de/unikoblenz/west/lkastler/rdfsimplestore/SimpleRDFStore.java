@@ -86,8 +86,8 @@ public class SimpleRDFStore {
 			}
 			
 			Token s = tokens[0].startsWith("?") ? new Variable(tokens[0]) : new Term(tokens[0]);
-			Token p = tokens[0].startsWith("?") ? new Variable(tokens[1]) : new Term(tokens[1]);
-			Token o = tokens[0].startsWith("?") ? new Variable(tokens[2]) : new Term(tokens[2]);
+			Token p = tokens[1].startsWith("?") ? new Variable(tokens[1]) : new Term(tokens[1]);
+			Token o = tokens[2].startsWith("?") ? new Variable(tokens[2]) : new Term(tokens[2]);
 			
 			bgp.add(new TriplePattern(s, p, o));
 		}

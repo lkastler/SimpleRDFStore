@@ -48,7 +48,27 @@ public class MappingImpl extends HashMap<Variable, Term> implements Mapping {
 		throw new MergeException("not compatible");
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.util.HashMap#clone()
+	 */
+	public Mapping clone() {
+		return (Mapping)super.clone();
+	}
 	
-	
-
+	/*
+	 * (non-Javadoc)
+	 * @see java.util.AbstractMap#equals(java.lang.Object)
+	 */
+	public boolean equals(Object other) {
+		return super.equals(other);
+//		if(other != null && other instanceof Mapping) {
+//			Mapping o = (Mapping)other;
+//			if(o.size() == size()) {
+//				return isCompatible(o);
+//			}
+//		}
+//		
+//		return false;
+	}
 }

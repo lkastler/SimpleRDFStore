@@ -33,4 +33,23 @@ public class MappingsImpl extends ArrayList<Mapping> implements Mappings {
 		
 		return map;
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.util.AbstractList#equals(java.lang.Object)
+	 */
+	public boolean equals(Object other) {
+		if(other != null && other instanceof Mappings) {
+			Mappings o = (Mappings)other;
+			if(o.size() == size()) {
+				for(Mapping m : o) {
+					if(!contains(m)) {
+						return false;
+					}
+				}
+				return true;
+			}
+		}
+		return false;
+	}
 }
