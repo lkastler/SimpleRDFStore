@@ -77,8 +77,7 @@ public class BasicGraphPatternQueryTest {
 		m.put(new Variable("?z"), new Term("e"));
 		m.put(new Variable("?p"), new Term("g"));
 		map.add(m);
-		
-		
+				
 		assertEquals(map, store.query("?x b ?y. ?x d ?z. ?z f ?p"));
 	}
 	
