@@ -1,7 +1,9 @@
 package de.unikoblenz.west.lkastler.rdfsimplestore.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,7 +16,7 @@ import de.unikoblenz.west.lkastler.rdfsimplestore.query.Mappings;
 import de.unikoblenz.west.lkastler.rdfsimplestore.query.Query;
 import de.unikoblenz.west.lkastler.rdfsimplestore.query.QueryEngine;
 import de.unikoblenz.west.lkastler.rdfsimplestore.query.TriplePattern;
-import de.unikoblenz.west.lkastler.rdfsimplestore.storage.Storage;
+import de.unikoblenz.west.lkastler.rdfsimplestore.storage.QueryableStorage;
 import de.unikoblenz.west.lkastler.rdfsimplestore.structure.Term;
 import de.unikoblenz.west.lkastler.rdfsimplestore.structure.Triple;
 import de.unikoblenz.west.lkastler.rdfsimplestore.structure.Variable;
@@ -24,7 +26,7 @@ import de.unikoblenz.west.lkastler.rdfsimplestore.structure.Variable;
  * 
  * @author lkastler
  */
-public class TableStorage implements Storage, QueryEngine {
+public class TableStorage implements QueryableStorage {
 	
 	static Logger log = LogManager.getLogger();
 		
@@ -303,6 +305,12 @@ public class TableStorage implements Storage, QueryEngine {
 	@Override
 	public String toString() {
 		return "TableStorage [" + spo + "]";
+	}
+
+	public List<QueryEngine> getQueryEngines() {
+		ArrayList<QueryEngine> engines = new ArrayList<QueryEngine>();
+		engines.add(this);
+		return engines;
 	}
 
 }

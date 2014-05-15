@@ -1,6 +1,5 @@
 package de.unikoblenz.west.lkastler.rdfsimplestore;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.apache.logging.log4j.LogManager;
@@ -9,8 +8,8 @@ import org.apache.logging.log4j.Logger;
 import de.unikoblenz.west.lkastler.rdfsimplestore.exceptions.EvaluationException;
 import de.unikoblenz.west.lkastler.rdfsimplestore.exceptions.ParsingException;
 import de.unikoblenz.west.lkastler.rdfsimplestore.exceptions.StorageException;
+import de.unikoblenz.west.lkastler.rdfsimplestore.impl.DistributedStorageImpl;
 import de.unikoblenz.west.lkastler.rdfsimplestore.impl.SimpleQueryEngine;
-import de.unikoblenz.west.lkastler.rdfsimplestore.impl.TableStorage;
 import de.unikoblenz.west.lkastler.rdfsimplestore.query.BasicGraphPattern;
 import de.unikoblenz.west.lkastler.rdfsimplestore.query.Mappings;
 import de.unikoblenz.west.lkastler.rdfsimplestore.query.QueryEngine;
@@ -34,12 +33,9 @@ public class SimpleRDFStore {
 	private QueryEngine engine;
 	
 	public SimpleRDFStore() {
-		store = new TableStorage();
-		
-		ArrayList<Storage> stores = new ArrayList<Storage>();
-		stores.add(store);
-		
-		engine = new SimpleQueryEngine(stores);
+		store = new DistributedStorageImpl();
+				
+		engine = new SimpleQueryEngine(store.getQueryEngines());
 	}
 	
 	/**

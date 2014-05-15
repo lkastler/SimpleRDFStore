@@ -15,7 +15,6 @@ import de.unikoblenz.west.lkastler.rdfsimplestore.query.Mappings;
 import de.unikoblenz.west.lkastler.rdfsimplestore.query.Query;
 import de.unikoblenz.west.lkastler.rdfsimplestore.query.QueryEngine;
 import de.unikoblenz.west.lkastler.rdfsimplestore.query.TriplePattern;
-import de.unikoblenz.west.lkastler.rdfsimplestore.storage.Storage;
 import de.unikoblenz.west.lkastler.rdfsimplestore.structure.Variable;
 
 /**
@@ -27,14 +26,14 @@ public class SimpleQueryEngine implements QueryEngine {
 
 	static Logger log = LogManager.getLogger();
 	
-	private ArrayList<Storage> storages;
+	private ArrayList<QueryEngine> engines;
 	
 	/**
 	 * constructor given a list of stores.
 	 * @param storages.
 	 */
-	public SimpleQueryEngine(List<Storage> storages) {
-		this.storages = new ArrayList<Storage>(storages);
+	public SimpleQueryEngine(List<QueryEngine> storages) {
+		this.engines = new ArrayList<QueryEngine>(storages);
 	}
 	
 	/*
@@ -45,7 +44,7 @@ public class SimpleQueryEngine implements QueryEngine {
 		Mappings sol = new MappingsImpl();
 		
 		if(query instanceof TriplePattern) {
-			for(Storage store : storages) {
+			for(QueryEngine store : engines) {
 				Mappings s = store.query(query);
 				sol.addAll(s);
 			}
@@ -57,7 +56,7 @@ public class SimpleQueryEngine implements QueryEngine {
 		
 		if(query instanceof BasicGraphPattern) {
 					
-			for(Storage store : storages) {
+			for(QueryEngine store : engines) {
 				Mappings s = store.query(query);
 				
 				sol = sol.join(s);

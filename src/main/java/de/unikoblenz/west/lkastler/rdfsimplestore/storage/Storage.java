@@ -1,5 +1,7 @@
 package de.unikoblenz.west.lkastler.rdfsimplestore.storage;
 
+import java.util.List;
+
 import de.unikoblenz.west.lkastler.rdfsimplestore.exceptions.StorageException;
 import de.unikoblenz.west.lkastler.rdfsimplestore.query.QueryEngine;
 import de.unikoblenz.west.lkastler.rdfsimplestore.structure.Triple;
@@ -9,7 +11,7 @@ import de.unikoblenz.west.lkastler.rdfsimplestore.structure.Triple;
  * @author lkastler
  *
  */
-public interface Storage extends QueryEngine {
+public interface Storage {
 
 	/**
 	 * adds given Triple to the Storage.
@@ -18,4 +20,9 @@ public interface Storage extends QueryEngine {
 	 */
 	void add(Triple triple) throws StorageException;
 
+	/**
+	 * returns a list of QueryEngines to use on this Storage.
+	 * @return a list of QueryEngines to use on this Storage.
+	 */
+	List<QueryEngine> getQueryEngines();
 }
