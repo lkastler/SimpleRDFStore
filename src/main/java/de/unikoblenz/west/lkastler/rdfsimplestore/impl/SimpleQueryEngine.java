@@ -50,7 +50,7 @@ public class SimpleQueryEngine implements QueryEngine {
 				sol.addAll(s);
 			}
 			
-			log.debug("solution: " + sol);
+			log.info("solution: " + sol);
 			
 			return sol;
 		}
@@ -67,7 +67,7 @@ public class SimpleQueryEngine implements QueryEngine {
 			
 			Mappings cleaned = select(sol, getVariables((BasicGraphPattern)query));
 					
-			log.debug("solution: " + cleaned);
+			log.info("solution: " + cleaned);
 			
 			return cleaned;
 		}
@@ -80,7 +80,7 @@ public class SimpleQueryEngine implements QueryEngine {
 		Mappings result = new MappingsImpl();
 		
 		for(Mapping m : map) {
-			if(m.keySet().equals(v)) {
+			if(m.getVariables().equals(v)) {
 				result.add(m);
 			}
 		}
@@ -95,6 +95,8 @@ public class SimpleQueryEngine implements QueryEngine {
 		for(TriplePattern tp : bgp) {
 			result.addAll(getVariables(tp));
 		}
+
+		log.debug("variables: " + result);
 		
 		return result;
 	}

@@ -1,6 +1,10 @@
 package de.unikoblenz.west.lkastler.rdfsimplestore.impl;
 
 import java.util.HashMap;
+import java.util.Set;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import de.unikoblenz.west.lkastler.rdfsimplestore.exceptions.MergeException;
 import de.unikoblenz.west.lkastler.rdfsimplestore.query.Mapping;
@@ -9,6 +13,8 @@ import de.unikoblenz.west.lkastler.rdfsimplestore.structure.Variable;
 
 public class MappingImpl extends HashMap<Variable, Term> implements Mapping {
 
+	static Logger log = LogManager.getLogger();
+	
 	private static final long serialVersionUID = 1L;
 
 	/*
@@ -17,11 +23,11 @@ public class MappingImpl extends HashMap<Variable, Term> implements Mapping {
 	 */
 	public boolean isCompatible(Mapping other) {
 		if(other == null) {
-			return false;
+			return true;
 		}
 		for(Variable t : other.keySet()) {
 			if(containsKey(t)) {
-				if(other.get(t) != get(t)) {
+				if(!other.get(t).equals(get(t))) {
 					return false;
 				}
 			}
@@ -45,7 +51,13 @@ public class MappingImpl extends HashMap<Variable, Term> implements Mapping {
 			return map; 
 		}
 		
-		throw new MergeException("not compatible");
+		throw new MergeException("not compatible: " + this + "; " + other);
+	}
+	
+
+	public Set<Variable> getVariables() {
+		log.debug("variables: " + keySet());
+		return keySet();
 	}
 	
 	/*

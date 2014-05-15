@@ -50,7 +50,7 @@ public class SimpleRDFStore {
 	 * @throws ParsingException - thrown if String represented RDF triples could not be parsed.
 	 */
 	public void add(String... triples) throws StorageException, ParsingException {
-		log.debug("storing: " + Arrays.toString(triples));
+		log.info("storing: " + Arrays.toString(triples));
 		for(String t : triples) {
 			String[] tokens = t.trim().split(" ");
 			
@@ -72,7 +72,7 @@ public class SimpleRDFStore {
 	 * @throws ParsingException - notifying if parsing went wrong.
 	 */
 	public Mappings query(String query) throws EvaluationException, ParsingException {
-		log.debug("evaluating: " + query);
+		log.info("evaluating: " + query);
 		
 		String[] triplePatterns = query.trim().split("\\.");
 		

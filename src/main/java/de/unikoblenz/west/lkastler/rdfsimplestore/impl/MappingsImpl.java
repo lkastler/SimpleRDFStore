@@ -2,6 +2,9 @@ package de.unikoblenz.west.lkastler.rdfsimplestore.impl;
 
 import java.util.ArrayList;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.unikoblenz.west.lkastler.rdfsimplestore.exceptions.MergeException;
 import de.unikoblenz.west.lkastler.rdfsimplestore.query.Mapping;
 import de.unikoblenz.west.lkastler.rdfsimplestore.query.Mappings;
@@ -13,8 +16,9 @@ import de.unikoblenz.west.lkastler.rdfsimplestore.query.Mappings;
  */
 public class MappingsImpl extends ArrayList<Mapping> implements Mappings {
 
+	static Logger log = LogManager.getLogger();
+	
 	private static final long serialVersionUID = 1L;
-
 
 	/*
 	 * (non-Javadoc)
@@ -27,7 +31,9 @@ public class MappingsImpl extends ArrayList<Mapping> implements Mappings {
 			for(Mapping there : other) {
 				try {
 					map.add(here.join(there));
-				} catch (MergeException e) {}
+				} catch (MergeException e) {
+					log.debug(e);
+				}
 			}
 		}
 		

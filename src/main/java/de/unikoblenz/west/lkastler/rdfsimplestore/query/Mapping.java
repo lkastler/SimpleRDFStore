@@ -1,6 +1,7 @@
 package de.unikoblenz.west.lkastler.rdfsimplestore.query;
 
 import java.util.Map;
+import java.util.Set;
 
 import de.unikoblenz.west.lkastler.rdfsimplestore.exceptions.MergeException;
 import de.unikoblenz.west.lkastler.rdfsimplestore.structure.Term;
@@ -33,4 +34,10 @@ public interface Mapping extends Map<Variable, Term>, Cloneable {
 	 * @return a clone of this Mapping.
 	 */
 	public Mapping clone();
+	
+	/**
+	 * returns the set of Variable where this mapping is defined on.
+	 * @return the set of Variable where this mapping is defined on.
+	 */
+	public Set<Variable> getVariables();
 }

@@ -92,9 +92,7 @@ public class TableStorage implements Storage, QueryEngine {
 				map.addAll(m);
 			}
 						
-			
 			return map;
-			
 		}
 	
 		throw new EvaluationException("not supported");
@@ -241,7 +239,6 @@ public class TableStorage implements Storage, QueryEngine {
 					}
 				}
 				else {
-					log.debug(sop.containsKey(q.getSubject()));
 					// s ? o
 					if(sop.containsKey(q.getSubject()) && sop.get(q.getSubject()).containsKey(q.getObject())) {
 						Mapping map = new MappingImpl();
@@ -252,7 +249,7 @@ public class TableStorage implements Storage, QueryEngine {
 									
 							Term test_p = mapping.put((Variable)q.getPredicate(), _p);
 							
-							if(test_p != null && test_p !=  _p) {
+									if(test_p != null && test_p !=  _p) {
 								continue;
 							}
 							
@@ -292,6 +289,8 @@ public class TableStorage implements Storage, QueryEngine {
 				}
 			}
 		}
+		
+		log.debug("tp solution: " + result);
 		
 		return result;
 	}
