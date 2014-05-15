@@ -1,11 +1,11 @@
 package de.unikoblenz.west.lkastler.rdfsimplestore.query;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * container for the Mapping.
  */
-public interface Mappings extends List<Mapping> {
+public interface Mappings extends Set<Mapping> {
 	
 	/**
 	 * joins all Mapping objects in this Mappings with all Mapping objects in the other Mappings, if they are compatible.

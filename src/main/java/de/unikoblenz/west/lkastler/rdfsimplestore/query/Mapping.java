@@ -12,7 +12,7 @@ import de.unikoblenz.west.lkastler.rdfsimplestore.structure.Variable;
  * 
  * @author lkastler
  */
-public interface Mapping extends Map<Variable, Term>, Cloneable {
+public interface Mapping extends Map<Variable, Term> {
 	
 	/**
 	 * tests if given Mapping is compatible to this Mapping.

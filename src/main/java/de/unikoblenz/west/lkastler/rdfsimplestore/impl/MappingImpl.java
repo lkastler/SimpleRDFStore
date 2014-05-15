@@ -73,14 +73,14 @@ public class MappingImpl extends HashMap<Variable, Term> implements Mapping {
 	 * @see java.util.AbstractMap#equals(java.lang.Object)
 	 */
 	public boolean equals(Object other) {
-		return super.equals(other);
-//		if(other != null && other instanceof Mapping) {
-//			Mapping o = (Mapping)other;
-//			if(o.size() == size()) {
-//				return isCompatible(o);
-//			}
-//		}
-//		
-//		return false;
+
+		if(other != null && other instanceof Mapping) {
+			Mapping o = (Mapping)other;
+			if(o.size() == size()) {
+				return isCompatible(o);
+			}
+		}
+		
+		return false;
 	}
 }
