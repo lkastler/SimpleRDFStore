@@ -11,6 +11,7 @@ import de.unikoblenz.west.lkastler.rdfsimplestore.impl.MappingImpl;
 import de.unikoblenz.west.lkastler.rdfsimplestore.impl.MappingsImpl;
 import de.unikoblenz.west.lkastler.rdfsimplestore.query.Mapping;
 import de.unikoblenz.west.lkastler.rdfsimplestore.query.Mappings;
+import de.unikoblenz.west.lkastler.rdfsimplestore.query.Query;
 import de.unikoblenz.west.lkastler.rdfsimplestore.structure.Term;
 import de.unikoblenz.west.lkastler.rdfsimplestore.structure.Variable;
 
@@ -35,20 +36,22 @@ public class TriplePatternQueryTest {
 	@Test
 	public void testPattern1() throws Throwable {
 		
+		Query q = SimpleRDFStore.parse("?x ?y ?z.");
+		
 		Mappings map = new MappingsImpl();
-		Mapping m = new MappingImpl();
+		Mapping m = new MappingImpl(q);
 		m.put(new Variable("?x"), new Term("a"));
 		m.put(new Variable("?y"), new Term("b"));
 		m.put(new Variable("?z"), new Term("c"));
 		map.add(m);
 		
-		m = new MappingImpl();
+		m = new MappingImpl(q);
 		m.put(new Variable("?x"), new Term("a"));
 		m.put(new Variable("?y"), new Term("b"));
 		m.put(new Variable("?z"), new Term("d"));
 		map.add(m);
 		
-		assertEquals(map, store.query("?x ?y ?z."));
+		assertEquals(map, store.query(q));
 	}
 	
 	@Test
@@ -111,19 +114,20 @@ public class TriplePatternQueryTest {
 	
 	@Test
 	public void testPattern2() throws Throwable {
-		
+		Query q = SimpleRDFStore.parse("a ?y ?z.");
+				
 		Mappings map = new MappingsImpl();
-		Mapping m = new MappingImpl();
+		Mapping m = new MappingImpl(q);
 		m.put(new Variable("?y"), new Term("b"));
 		m.put(new Variable("?z"), new Term("c"));
 		map.add(m);
 		
-		m = new MappingImpl();
+		m = new MappingImpl(q);
 		m.put(new Variable("?y"), new Term("b"));
 		m.put(new Variable("?z"), new Term("d"));
 		map.add(m);
 		
-		assertEquals(map, store.query("a ?y ?z."));
+		assertEquals(map, store.query(q));
 	}
 	
 	@Test
@@ -154,79 +158,89 @@ public class TriplePatternQueryTest {
 	@Test
 	public void testPattern3() throws Throwable {
 
+		Query q = SimpleRDFStore.parse("?x b ?z.");
+		
 		Mappings map = new MappingsImpl();
-		Mapping m = new MappingImpl();
+		Mapping m = new MappingImpl(q);
 		m.put(new Variable("?x"), new Term("a"));
 		m.put(new Variable("?z"), new Term("c"));
 		map.add(m);
 		
-		m = new MappingImpl();
+		m = new MappingImpl(q);
 		m.put(new Variable("?x"), new Term("a"));
 		m.put(new Variable("?z"), new Term("d"));
 		map.add(m);
 		
-		assertEquals(map, store.query("?x b ?z."));
+		assertEquals(map, store.query(q));
 	}
 	
 	@Test
 	public void testPattern4() throws Throwable {
 		
+		Query q = SimpleRDFStore.parse("?x ?y c.");
+		
 		Mappings map = new MappingsImpl();
-		Mapping m = new MappingImpl();
+		Mapping m = new MappingImpl(q);
 		m.put(new Variable("?x"), new Term("a"));
 		m.put(new Variable("?y"), new Term("b"));
 		map.add(m);
 		
-		assertEquals(map, store.query("?x ?y c."));
+		assertEquals(map, store.query(q));
 	}	
 	
 	@Test
 	public void testPattern5() throws Throwable {
 		
+		Query q = SimpleRDFStore.parse("a b ?z.");
+		
 		Mappings map = new MappingsImpl();
-		Mapping m = new MappingImpl();
+		Mapping m = new MappingImpl(q);
 		m.put(new Variable("?z"), new Term("c"));
 		map.add(m);
 		
-		m = new MappingImpl();
+		m = new MappingImpl(q);
 		m.put(new Variable("?z"), new Term("d"));
 		map.add(m);
 		
-		assertEquals(map, store.query("a b ?z."));
+		assertEquals(map, store.query(q));
 	}	
 	
 	@Test
 	public void testPattern6() throws Throwable {
 	
+		Query q = SimpleRDFStore.parse("?x b c.");
+		
 		Mappings map = new MappingsImpl();
-		Mapping m = new MappingImpl();
+		Mapping m = new MappingImpl(q);
 		m.put(new Variable("?x"), new Term("a"));
 		map.add(m);
 		
-		assertEquals(map, store.query("?x b c."));
+		assertEquals(map, store.query(q));
 		
 	}	
 	
 	@Test
 	public void testPattern7() throws Throwable {
 		
+		Query q = SimpleRDFStore.parse("a ?y c.");
+		
 		Mappings map = new MappingsImpl();
-		Mapping m = new MappingImpl();
+		Mapping m = new MappingImpl(q);
 		m.put(new Variable("?y"), new Term("b"));
 		map.add(m);
 		
-		assertEquals(map, store.query("a ?y c."));
+		assertEquals(map, store.query(q));
 	}
 	
 	@Test
 	public void testPattern8() throws Throwable {
 
-		// how should be this be handled?
+		Query q = SimpleRDFStore.parse("a b c.");
 		
 		Mappings map = new MappingsImpl();
-		map.add(new MappingImpl());
+		map.add(new MappingImpl(q));
 		
-		assertEquals(map, store.query("a b c."));
+		assertEquals(map, store.query(q));
 	}	
 	
 	@Test

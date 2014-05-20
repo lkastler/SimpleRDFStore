@@ -1,5 +1,6 @@
 package de.unikoblenz.west.lkastler.rdfsimplestore.impl;
 
+import java.util.Collection;
 import java.util.HashSet;
 
 import org.apache.logging.log4j.LogManager;
@@ -27,19 +28,46 @@ public class MappingsImpl extends HashSet<Mapping> implements Mappings {
 	public Mappings join(Mappings other) {
 		MappingsImpl map = new MappingsImpl();
 		
+		log.debug("join: " + this + " with " + other);
+		
+		if(other == null || other.size() == 0) {
+			log.debug("returning: " + this);
+			return this;
+		}
+		
+		if(this.size() == 0) {
+			log.debug("returning: " + other);
+			return other;
+		}
+		
 		for(Mapping here : this) {
 			for(Mapping there : other) {
 				try {
 					map.add(here.join(there));
 				} catch (MergeException e) {
-					log.debug(e);
+					log.error(e);
 				}
 			}
 		}
 		
+		log.debug("joined: " + map);
+		
 		return map;
 	}
 	
+	
+	
+	/* (non-Javadoc)
+	 * @see java.util.AbstractCollection#addAll(java.util.Collection)
+	 */
+	@Override
+	public boolean addAll(Collection<? extends Mapping> c) {
+		log.debug("Mappings.addAll: " + c.toString());
+		return super.addAll(c);
+	}
+
+
+
 	/*
 	 * (non-Javadoc)
 	 * @see java.util.AbstractList#equals(java.lang.Object)

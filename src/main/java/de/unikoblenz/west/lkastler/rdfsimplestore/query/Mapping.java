@@ -40,4 +40,10 @@ public interface Mapping extends Map<Variable, Term> {
 	 * @return the set of Variable where this mapping is defined on.
 	 */
 	public Set<Variable> getVariables();
+	
+	/**
+	 * returns a Set of Query that this Mapping matches.
+	 * @return a Set of Query that this Mapping matches.
+	 */
+	public Set<Query> getMatchingQueries();
 }

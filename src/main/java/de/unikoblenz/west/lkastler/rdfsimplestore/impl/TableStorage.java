@@ -28,14 +28,23 @@ import de.unikoblenz.west.lkastler.rdfsimplestore.structure.Variable;
  */
 public class TableStorage implements QueryableStorage {
 	
-	static Logger log = LogManager.getLogger();
+	private Logger log;
+	private long id;
+	
+	private HashMap<Term, HashMap<Term, HashSet<Term>>> spo = new HashMap<Term, HashMap<Term, HashSet<Term>>>();
+	private HashMap<Term, HashMap<Term, HashSet<Term>>> sop = new HashMap<Term, HashMap<Term, HashSet<Term>>>();
+	private HashMap<Term, HashMap<Term, HashSet<Term>>> pso = new HashMap<Term, HashMap<Term, HashSet<Term>>>();
+	private HashMap<Term, HashMap<Term, HashSet<Term>>> pos = new HashMap<Term, HashMap<Term, HashSet<Term>>>();
+	private HashMap<Term, HashMap<Term, HashSet<Term>>> osp = new HashMap<Term, HashMap<Term, HashSet<Term>>>();
+	private HashMap<Term, HashMap<Term, HashSet<Term>>> ops = new HashMap<Term, HashMap<Term, HashSet<Term>>>();
+	
+	public TableStorage(long id) {
+		super();
+		this.id = id;
+		log = LogManager.getLogger(TableStorage.class.toString() + " " + Long.toString(id));
 		
-	HashMap<Term, HashMap<Term, HashSet<Term>>> spo = new HashMap<Term, HashMap<Term, HashSet<Term>>>();
-	HashMap<Term, HashMap<Term, HashSet<Term>>> sop = new HashMap<Term, HashMap<Term, HashSet<Term>>>();
-	HashMap<Term, HashMap<Term, HashSet<Term>>> pso = new HashMap<Term, HashMap<Term, HashSet<Term>>>();
-	HashMap<Term, HashMap<Term, HashSet<Term>>> pos = new HashMap<Term, HashMap<Term, HashSet<Term>>>();
-	HashMap<Term, HashMap<Term, HashSet<Term>>> osp = new HashMap<Term, HashMap<Term, HashSet<Term>>>();
-	HashMap<Term, HashMap<Term, HashSet<Term>>> ops = new HashMap<Term, HashMap<Term, HashSet<Term>>>();
+		log.debug("created");
+	}
 	
 	/*
 	 * (non-Javadoc)
@@ -77,6 +86,8 @@ public class TableStorage implements QueryableStorage {
 	 * @see de.unikoblenz.west.lkastler.rdfsimplestore.query.QueryEngine#query(de.unikoblenz.west.lkastler.rdfsimplestore.query.Query)
 	 */
 	public Mappings query(Query query) throws EvaluationException {
+		log.debug("query: " + query);
+		
 		if(query instanceof TriplePattern) {
 			return query((TriplePattern)query);
 		}
@@ -89,7 +100,7 @@ public class TableStorage implements QueryableStorage {
 			for(TriplePattern p : bgp) {
 				Mappings m = query(p);
 				
-				map = map.join(m);
+				map.addAll(map.join(m));
 				
 				map.addAll(m);
 			}
@@ -110,7 +121,7 @@ public class TableStorage implements QueryableStorage {
 					// ? ? ?
 					for(Term _s : spo.keySet()) {
 						for(Term _p : spo.get(_s).keySet()) {
-							Mapping map = new MappingImpl();
+							Mapping map = new MappingImpl(q);
 							
 							map.put((Variable) q.getSubject(), _s);
 							
@@ -136,7 +147,7 @@ public class TableStorage implements QueryableStorage {
 					if(ops.containsKey(q.getObject())) {
 						for(Term _p : ops.get(q.getObject()).keySet()) {
 							
-							Mapping map = new MappingImpl();
+							Mapping map = new MappingImpl(q);
 							
 							Term test = map.put((Variable) q.getPredicate(), _p);
 							
@@ -166,7 +177,7 @@ public class TableStorage implements QueryableStorage {
 					// ? p ?
 					if(pso.containsKey(q.getPredicate())) {
 						for(Term _s : pso.get(q.getPredicate()).keySet()) {
-							Mapping map = new MappingImpl();
+							Mapping map = new MappingImpl(q);
 							
 							Term test = map.put((Variable) q.getSubject(), _s);
 							
@@ -192,7 +203,7 @@ public class TableStorage implements QueryableStorage {
 				else {
 					// ? p o
 					if(pos.containsKey(q.getPredicate()) && pos.get(q.getPredicate()).containsKey(q.getObject())) {
-						Mapping map = new MappingImpl();
+						Mapping map = new MappingImpl(q);
 						
 						for(Term _s : pos.get(q.getPredicate()).get(q.getObject())) {
 							
@@ -216,7 +227,7 @@ public class TableStorage implements QueryableStorage {
 					// s ? ?
 					if(spo.containsKey(q.getSubject())) {
 						for(Term _p : spo.get(q.getSubject()).keySet()) {
-							Mapping map = new MappingImpl();
+							Mapping map = new MappingImpl(q);
 							
 							Term test = map.put((Variable) q.getPredicate(), _p);
 							
@@ -243,7 +254,7 @@ public class TableStorage implements QueryableStorage {
 				else {
 					// s ? o
 					if(sop.containsKey(q.getSubject()) && sop.get(q.getSubject()).containsKey(q.getObject())) {
-						Mapping map = new MappingImpl();
+						Mapping map = new MappingImpl(q);
 						
 						for(Term _p : sop.get(q.getSubject()).get(q.getObject())) {
 							
@@ -264,7 +275,7 @@ public class TableStorage implements QueryableStorage {
 				if(q.getObject() instanceof Variable) {
 					// s p ?
 					if(spo.containsKey(q.getSubject()) && spo.get(q.getSubject()).containsKey(q.getPredicate())) {
-						Mapping map = new MappingImpl();
+						Mapping map = new MappingImpl(q);
 						
 						for(Term _o : spo.get(q.getSubject()).get(q.getPredicate())) {
 							
@@ -286,19 +297,26 @@ public class TableStorage implements QueryableStorage {
 					if(spo.containsKey(q.getSubject()) 
 							&& spo.get(q.getSubject()).containsKey(q.getPredicate()) 
 							&& spo.get(q.getSubject()).get(q.getPredicate()).contains(q.getObject())) {
-						result.add(new MappingImpl());
+						result.add(new MappingImpl(q));
 					}
 				}
 			}
 		}
 		
-		log.debug("tp solution: " + result);
+		log.debug(q + " solution: " + result);
 		
 		return result;
 	}
 	
 
 	
+	/**
+	 * @return the id
+	 */
+	public long getId() {
+		return id;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -312,5 +330,4 @@ public class TableStorage implements QueryableStorage {
 		engines.add(this);
 		return engines;
 	}
-
 }

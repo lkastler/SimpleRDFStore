@@ -11,4 +11,6 @@ public interface QueryEngine {
 	
 	public Mappings query(Query query) throws EvaluationException;
 	
+	public long getId();
+	
 }

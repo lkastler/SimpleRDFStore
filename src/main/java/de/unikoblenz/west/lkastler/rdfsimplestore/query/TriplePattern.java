@@ -43,5 +43,13 @@ public class TriplePattern implements Query {
 		return object;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return subject + " " + predicate + " " + object;
+	}
+	
 	
 }

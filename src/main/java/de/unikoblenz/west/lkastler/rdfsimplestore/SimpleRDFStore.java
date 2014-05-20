@@ -12,6 +12,7 @@ import de.unikoblenz.west.lkastler.rdfsimplestore.impl.DistributedStorageImpl;
 import de.unikoblenz.west.lkastler.rdfsimplestore.impl.SimpleQueryEngine;
 import de.unikoblenz.west.lkastler.rdfsimplestore.query.BasicGraphPattern;
 import de.unikoblenz.west.lkastler.rdfsimplestore.query.Mappings;
+import de.unikoblenz.west.lkastler.rdfsimplestore.query.Query;
 import de.unikoblenz.west.lkastler.rdfsimplestore.query.QueryEngine;
 import de.unikoblenz.west.lkastler.rdfsimplestore.query.TriplePattern;
 import de.unikoblenz.west.lkastler.rdfsimplestore.storage.Storage;
@@ -31,6 +32,33 @@ public class SimpleRDFStore {
 	
 	private Storage store;
 	private QueryEngine engine;
+	
+	/**
+	 * parses a String representation of a BGP to a Query object.
+	 * @param query - String representation of a BGP.
+	 * @return a Query object corresponing to the given String representation of a BGP.
+	 * @throws ParsingException - mal-formed query string.
+	 */
+	public static Query parse(String query) throws ParsingException {
+		String[] triplePatterns = query.trim().split("\\.");
+		
+		BasicGraphPattern bgp = new BasicGraphPattern();
+		
+		for(String t : triplePatterns) {
+			String[] tokens = t.trim().split(" ");
+			
+			if(tokens.length != 3) {
+				throw new ParsingException("not able to parse triple pattern: " + t);
+			}
+			
+			Token s = tokens[0].startsWith("?") ? new Variable(tokens[0]) : new Term(tokens[0]);
+			Token p = tokens[1].startsWith("?") ? new Variable(tokens[1]) : new Term(tokens[1]);
+			Token o = tokens[2].startsWith("?") ? new Variable(tokens[2]) : new Term(tokens[2]);
+			
+			bgp.add(new TriplePattern(s, p, o));
+		}
+		return bgp;
+	}
 	
 	public SimpleRDFStore() {
 		store = new DistributedStorageImpl();
@@ -68,29 +96,23 @@ public class SimpleRDFStore {
 	 * @throws ParsingException - notifying if parsing went wrong.
 	 */
 	public Mappings query(String query) throws EvaluationException, ParsingException {
-		log.info("evaluating: " + query);
 		
-		String[] triplePatterns = query.trim().split("\\.");
-		
-		BasicGraphPattern bgp = new BasicGraphPattern();
-		
-		for(String t : triplePatterns) {
-			String[] tokens = t.trim().split(" ");
-			
-			if(tokens.length != 3) {
-				throw new ParsingException("not able to parse triple pattern: " + t);
-			}
-			
-			Token s = tokens[0].startsWith("?") ? new Variable(tokens[0]) : new Term(tokens[0]);
-			Token p = tokens[1].startsWith("?") ? new Variable(tokens[1]) : new Term(tokens[1]);
-			Token o = tokens[2].startsWith("?") ? new Variable(tokens[2]) : new Term(tokens[2]);
-			
-			bgp.add(new TriplePattern(s, p, o));
-		}
-		
-		return engine.query(bgp);
+		return this.query(SimpleRDFStore.parse(query));
 	}
 
+	/**
+	 * queries this SimpleRDFStore and recieves a set of solutions.
+	 * @param query - Query to query...
+	 * @return Mappings that fullfils the query.
+	 * @throws EvaluationException thrown if evaluation of given query was not possible.
+	 * @throws ParsingException - thrown if given String representation of a query was not possible
+	 */
+	public Mappings query(Query query) throws EvaluationException, ParsingException {
+		log.info("evaluating: " + query);
+		
+		return engine.query(query);
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */

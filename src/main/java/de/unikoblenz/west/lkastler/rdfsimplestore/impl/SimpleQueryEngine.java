@@ -59,21 +59,48 @@ public class SimpleQueryEngine implements QueryEngine {
 			for(QueryEngine store : engines) {
 				Mappings s = store.query(query);
 				
-				sol = sol.join(s);
+				log.debug("before store " + store.getId() + ": " + s);
+				
+				sol.addAll(sol.join(s));
 				
 				sol.addAll(s);
+				
+				log.debug("after store " + store.getId() + ": " + sol);
 			}
 			
-			Mappings cleaned = select(sol, getVariables((BasicGraphPattern)query));
-					
-			log.info("solution: " + cleaned);
+			log.debug("uncleaned solution: " + sol);
 			
-			return cleaned;
+			// remove incomplete matchings
+			sol = removeIncompleteMappings(sol, (BasicGraphPattern)query);
+			
+			log.debug("cleand incomplete mappings solution: " + sol);
+			
+			// select only mappings that use all variables.
+			//sol = select(sol, getVariables((BasicGraphPattern)query));
+					
+			log.info("solution: " + sol);
+			
+			return sol;
 		}
 		
 		throw new EvaluationException("not supported");
 	}
 
+	
+	private Mappings removeIncompleteMappings(Mappings map, BasicGraphPattern bgp) {
+		Mappings result = new MappingsImpl();
+		
+		Set<Query> neededMatchings = new HashSet<Query>(bgp);
+		
+		for(Mapping m : map) {
+			if(m.getMatchingQueries().equals(neededMatchings)) {
+				result.add(m);
+			}
+		}
+		
+		return result;
+	}
+	
 	//
 	private Mappings select(Mappings map, Set<Variable> v) {
 		Mappings result = new MappingsImpl();
@@ -117,6 +144,11 @@ public class SimpleQueryEngine implements QueryEngine {
 		return result;
 	}
 	
+
+	public long getId() {
+		return 0;
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -124,5 +156,4 @@ public class SimpleQueryEngine implements QueryEngine {
 	public String toString() {
 		return "SimpleQueryEngine";
 	}
-
 }

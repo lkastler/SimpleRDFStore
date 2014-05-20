@@ -11,6 +11,7 @@ import de.unikoblenz.west.lkastler.rdfsimplestore.impl.MappingImpl;
 import de.unikoblenz.west.lkastler.rdfsimplestore.impl.MappingsImpl;
 import de.unikoblenz.west.lkastler.rdfsimplestore.query.Mapping;
 import de.unikoblenz.west.lkastler.rdfsimplestore.query.Mappings;
+import de.unikoblenz.west.lkastler.rdfsimplestore.query.Query;
 import de.unikoblenz.west.lkastler.rdfsimplestore.structure.Term;
 import de.unikoblenz.west.lkastler.rdfsimplestore.structure.Variable;
 
@@ -35,26 +36,30 @@ public class BasicGraphPatternQueryTest {
 	public void test1() throws Throwable {
 		log.info("Test 1");
 		
+		Query q = SimpleRDFStore.parse("?x b c. ?x d e");
+		
 		Mappings map = new MappingsImpl();
-		Mapping m = new MappingImpl();
+		Mapping m = new MappingImpl(q);
 		m.put(new Variable("?x"), new Term("a"));
 		map.add(m);
 		
-		assertEquals(map, store.query("?x b c. ?x d e"));
+		assertEquals(map, store.query(q));
 	}
 	
 	@Test
 	public void test2() throws Throwable {
 		log.info("Test 2");
 		
+		Query q = SimpleRDFStore.parse("?x ?y c. ?x ?z e");
+		
 		Mappings map = new MappingsImpl();
-		Mapping m = new MappingImpl();
+		Mapping m = new MappingImpl(q);
 		m.put(new Variable("?x"), new Term("a"));
 		m.put(new Variable("?y"), new Term("b"));
 		m.put(new Variable("?z"), new Term("d"));
 		map.add(m);
 		
-		assertEquals(map, store.query("?x ?y c. ?x ?z e"));
+		assertEquals(map, store.query(q));
 	}
 	
 	@Test
@@ -70,15 +75,17 @@ public class BasicGraphPatternQueryTest {
 	public void test4() throws Throwable {
 		log.info("Test 4");
 		
+		Query q = SimpleRDFStore.parse("?x b ?y. ?x d ?z. ?z f ?p");
+		
 		Mappings map = new MappingsImpl();
-		Mapping m = new MappingImpl();
+		Mapping m = new MappingImpl(q);
 		m.put(new Variable("?x"), new Term("a"));
 		m.put(new Variable("?y"), new Term("c"));
 		m.put(new Variable("?z"), new Term("e"));
 		m.put(new Variable("?p"), new Term("g"));
 		map.add(m);
 				
-		assertEquals(map, store.query("?x b ?y. ?x d ?z. ?z f ?p"));
+		assertEquals(map, store.query(q));
 	}
 	
 	@Test
