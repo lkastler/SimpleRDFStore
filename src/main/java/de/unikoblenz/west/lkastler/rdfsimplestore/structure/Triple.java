@@ -1,7 +1,7 @@
 package de.unikoblenz.west.lkastler.rdfsimplestore.structure;
 
 /**
- * resembles an RDF triple
+ * resembles an RDF triple.
  * 
  * @author lkastler
  *

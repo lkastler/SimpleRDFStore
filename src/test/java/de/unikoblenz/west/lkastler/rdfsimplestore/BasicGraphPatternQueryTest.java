@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.unikoblenz.west.lkastler.rdfsimplestore.exceptions.ParsingException;
 import de.unikoblenz.west.lkastler.rdfsimplestore.impl.MappingImpl;
 import de.unikoblenz.west.lkastler.rdfsimplestore.impl.MappingsImpl;
 import de.unikoblenz.west.lkastler.rdfsimplestore.query.Mapping;
@@ -95,5 +96,12 @@ public class BasicGraphPatternQueryTest {
 		Mappings map = new MappingsImpl();
 				
 		assertEquals(map, store.query("?x b ?y. ?y d ?z. ?z f ?p"));
+	}
+	
+	@Test(expected=ParsingException.class)
+	public void test6() throws Throwable {
+		log.info("Test 6");
+		
+		store.query("?x.");
 	}
 }
