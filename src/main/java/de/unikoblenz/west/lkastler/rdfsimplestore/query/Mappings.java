@@ -8,9 +8,9 @@ import java.util.Set;
 public interface Mappings extends Set<Mapping> {
 	
 	/**
-	 * joins all Mapping objects in this Mappings with all Mapping objects in the other Mappings, if they are compatible.
-	 * @param other - other Mappings to join.
-	 * @return all join Mapping objects that are compatible
+	 * joins all Mapping objects in this Mappings with the given Mapping object, if they are compatible.
+	 * @param other - a Mapping to join.
+	 * @return all joined Mapping objects that are compatible
 	 */
-	public Mappings join(Mappings other);
+	public Mappings join(Mapping other);
 }

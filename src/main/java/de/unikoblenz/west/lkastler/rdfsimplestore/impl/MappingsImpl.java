@@ -20,42 +20,25 @@ public class MappingsImpl extends HashSet<Mapping> implements Mappings {
 	static Logger log = LogManager.getLogger();
 	
 	private static final long serialVersionUID = 1L;
-
+	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unikoblenz.west.lkastler.rdfsimplestore.query.Mappings#join(de.unikoblenz.west.lkastler.rdfsimplestore.query.Mappings)
+	 * @see de.unikoblenz.west.lkastler.rdfsimplestore.query.Mappings#join(de.unikoblenz.west.lkastler.rdfsimplestore.query.Mapping)
 	 */
-	public Mappings join(Mappings other) {
+	public Mappings join(Mapping other) {
 		MappingsImpl map = new MappingsImpl();
 		
-		log.debug("join: " + this + " with " + other);
-		
-		if(other == null || other.size() == 0) {
-			log.debug("returning: " + this);
-			return this;
-		}
-		
-		if(this.size() == 0) {
-			log.debug("returning: " + other);
-			return other;
-		}
-		
 		for(Mapping here : this) {
-			for(Mapping there : other) {
-				try {
-					map.add(here.join(there));
-				} catch (MergeException e) {
-					log.error(e);
-				}
+			try {
+				log.debug("joining: " + here + " with " + other);
+				map.add(here.join(other));
+			} catch(MergeException e) {
+				log.error(e);
 			}
 		}
 		
-		log.debug("joined: " + map);
-		
 		return map;
 	}
-	
-	
 	
 	/* (non-Javadoc)
 	 * @see java.util.AbstractCollection#addAll(java.util.Collection)

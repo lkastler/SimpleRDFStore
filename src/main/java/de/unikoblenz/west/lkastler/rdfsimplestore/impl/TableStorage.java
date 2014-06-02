@@ -100,8 +100,6 @@ public class TableStorage implements QueryableStorage {
 			for(TriplePattern p : bgp) {
 				Mappings m = query(p);
 				
-				map.addAll(map.join(m));
-				
 				map.addAll(m);
 			}
 						
@@ -310,8 +308,9 @@ public class TableStorage implements QueryableStorage {
 	
 
 	
-	/**
-	 * @return the id
+	/*
+	 * (non-Javadoc)
+	 * @see de.unikoblenz.west.lkastler.rdfsimplestore.query.QueryEngine#getId()
 	 */
 	public long getId() {
 		return id;

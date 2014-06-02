@@ -15,7 +15,6 @@ import de.unikoblenz.west.lkastler.rdfsimplestore.query.Mappings;
 import de.unikoblenz.west.lkastler.rdfsimplestore.query.Query;
 import de.unikoblenz.west.lkastler.rdfsimplestore.query.QueryEngine;
 import de.unikoblenz.west.lkastler.rdfsimplestore.query.TriplePattern;
-import de.unikoblenz.west.lkastler.rdfsimplestore.structure.Variable;
 
 /**
  * defines a simple query engine.
@@ -55,17 +54,23 @@ public class SimpleQueryEngine implements QueryEngine {
 		}
 		
 		if(query instanceof BasicGraphPattern) {
-					
+			Mappings buffer = new MappingsImpl();
+			
 			for(QueryEngine store : engines) {
 				Mappings s = store.query(query);
 				
 				log.debug("before store " + store.getId() + ": " + s);
 				
-				sol.addAll(sol.join(s));
-				
-				sol.addAll(s);
-				
+				buffer.addAll(s);
+								
 				log.debug("after store " + store.getId() + ": " + sol);
+			}
+			
+			log.debug("all solutions from distr. stores: " + buffer);
+			
+			for(Mapping m : buffer) {
+				sol.addAll(sol.join(m));
+				sol.add(m);
 			}
 			
 			log.debug("uncleaned solution: " + sol);
@@ -73,7 +78,7 @@ public class SimpleQueryEngine implements QueryEngine {
 			// remove incomplete matchings
 			sol = removeIncompleteMappings(sol, (BasicGraphPattern)query);
 			
-			log.debug("cleand incomplete mappings solution: " + sol);
+			log.debug("cleaned incomplete mappings solution: " + sol);
 			
 			// select only mappings that use all variables.
 			//sol = select(sol, getVariables((BasicGraphPattern)query));
@@ -100,51 +105,11 @@ public class SimpleQueryEngine implements QueryEngine {
 		
 		return result;
 	}
-	
-	//
-	private Mappings select(Mappings map, Set<Variable> v) {
-		Mappings result = new MappingsImpl();
-		
-		for(Mapping m : map) {
-			if(m.getVariables().equals(v)) {
-				result.add(m);
-			}
-		}
-		
-		return result;
-	}
-	
-	//
-	private Set<Variable> getVariables(BasicGraphPattern bgp) {
-		HashSet<Variable> result = new HashSet<Variable>();
-		
-		for(TriplePattern tp : bgp) {
-			result.addAll(getVariables(tp));
-		}
 
-		log.debug("variables: " + result);
-		
-		return result;
-	}
-	
-	//
-	private Set<Variable> getVariables(TriplePattern tp) {
-		HashSet<Variable> result = new HashSet<Variable>();
-		
-		if(tp.getSubject() instanceof Variable) {
-			result.add((Variable)tp.getSubject());
-		}
-		if(tp.getPredicate() instanceof Variable) {
-			result.add((Variable)tp.getPredicate());
-		}
-		if(tp.getObject() instanceof Variable) {
-			result.add((Variable)tp.getObject());
-		}
-		
-		return result;
-	}
-	
-
+	/*
+	 * (non-Javadoc)
+	 * @see de.unikoblenz.west.lkastler.rdfsimplestore.query.QueryEngine#getId()
+	 */
 	public long getId() {
 		return 0;
 	}
