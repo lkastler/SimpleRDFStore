@@ -28,6 +28,17 @@ public class SimpleRDFStore {
 	private Storage store;
 	private QueryEngine engine;
 	
+
+	/**
+	 * constructor for a SimpleRDFStore that takes how many distributed stores should be generated. 
+	 * @param numberOfStores - number of stores to generate
+	 */
+	public SimpleRDFStore(int numberOfStores) {
+		store = new DistributedStorageImpl(numberOfStores);
+				
+		engine = new SimpleQueryEngine(store.getQueryEngines());
+	}
+	
 	/**
 	 * parses a String representation of a BGP to a Query object.
 	 * @param query - String representation of a BGP.
@@ -36,12 +47,6 @@ public class SimpleRDFStore {
 	 */
 	public static Query parse(String query) throws ParsingException {
 		return Parser.parseQuery(query);
-	}
-	
-	public SimpleRDFStore(int numberOfStores) {
-		store = new DistributedStorageImpl(numberOfStores);
-				
-		engine = new SimpleQueryEngine(store.getQueryEngines());
 	}
 	
 	/**
