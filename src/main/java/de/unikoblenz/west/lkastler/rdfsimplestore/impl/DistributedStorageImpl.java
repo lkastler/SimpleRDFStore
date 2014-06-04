@@ -28,10 +28,12 @@ public class DistributedStorageImpl implements DistributedStorage {
 	Random rand = new Random(0);
 	
 	
-	public DistributedStorageImpl() {
+	public DistributedStorageImpl(int numberOfStores) {
 		stores = new HashMap<Integer, QueryableStorage> ();
-		stores.put(0, new TableStorage(0));
-		stores.put(1, new TableStorage(1));
+		
+		for(int i = 0; i < numberOfStores; i++) {
+			stores.put(i, new TableStorage(i));
+		}
 	}
 	
 	public void add(Triple triple) throws StorageException {

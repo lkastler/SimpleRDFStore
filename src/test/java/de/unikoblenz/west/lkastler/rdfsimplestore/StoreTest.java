@@ -20,7 +20,7 @@ public class StoreTest {
 	public void testAdd() throws Throwable {
 		log.debug("testing: adding");
 	
-		SimpleRDFStore store = new SimpleRDFStore();
+		SimpleRDFStore store = new SimpleRDFStore(1);
 		store.add("a b c");
 	}
 	
@@ -28,7 +28,7 @@ public class StoreTest {
 	public void testAddDublicate() throws Throwable {
 		log.debug("testing: adding dublicate");
 	
-		SimpleRDFStore store = new SimpleRDFStore();
+		SimpleRDFStore store = new SimpleRDFStore(1);
 		store.add("a b c", "a b c");
 	}
 	
@@ -37,7 +37,7 @@ public class StoreTest {
 		log.debug("testing: malformed triple");
 		
 		try {
-			SimpleRDFStore store = new SimpleRDFStore();
+			SimpleRDFStore store = new SimpleRDFStore(1);
 			store.add("a b");
 			
 		} catch(ParsingException e) {
@@ -52,7 +52,7 @@ public class StoreTest {
 		log.debug("testing: malformed triple");
 		
 		try {
-			SimpleRDFStore store = new SimpleRDFStore();
+			SimpleRDFStore store = new SimpleRDFStore(1);
 			store.add("a b");
 			
 		} catch(ParsingException e) {
@@ -65,7 +65,7 @@ public class StoreTest {
 		log.debug("testing: malformed triples");
 		
 		try {
-			SimpleRDFStore store = new SimpleRDFStore();
+			SimpleRDFStore store = new SimpleRDFStore(1);
 			store.add("a b ?x"," a b c");
 			
 		} catch(ParsingException e) {

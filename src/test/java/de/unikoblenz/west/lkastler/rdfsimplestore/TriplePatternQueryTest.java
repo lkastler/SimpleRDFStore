@@ -28,7 +28,7 @@ public class TriplePatternQueryTest {
 	
 	@Before
 	public void setUp() throws Throwable {
-		store = new SimpleRDFStore();
+		store = new SimpleRDFStore(1);
 		store.add("a b c", "a b d");
 		log.debug(store.toString());
 	}

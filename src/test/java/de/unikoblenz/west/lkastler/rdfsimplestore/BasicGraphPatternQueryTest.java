@@ -29,7 +29,7 @@ public class BasicGraphPatternQueryTest {
 	
 	@Before
 	public void setUp() throws Throwable {
-		store = new SimpleRDFStore();
+		store = new SimpleRDFStore(2);
 		store.add("a b c", "a d e", "e f g");
 	}
 	

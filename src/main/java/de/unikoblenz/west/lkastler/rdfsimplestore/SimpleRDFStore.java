@@ -38,8 +38,8 @@ public class SimpleRDFStore {
 		return Parser.parseQuery(query);
 	}
 	
-	public SimpleRDFStore() {
-		store = new DistributedStorageImpl();
+	public SimpleRDFStore(int numberOfStores) {
+		store = new DistributedStorageImpl(numberOfStores);
 				
 		engine = new SimpleQueryEngine(store.getQueryEngines());
 	}
