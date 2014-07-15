@@ -53,7 +53,7 @@ public class SimpleQueryEngine implements QueryEngine {
 			return sol;
 		}
 		
-		if(query instanceof BasicGraphPattern) {
+		else if(query instanceof BasicGraphPattern) {
 			Mappings buffer = new MappingsImpl();
 			
 			for(QueryEngine store : engines) {

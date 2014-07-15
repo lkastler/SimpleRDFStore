@@ -1,6 +1,10 @@
 package de.unikoblenz.west.lkastler.rdfsimplestore;
 
 
+import java.io.File;
+import java.net.URL;
+import java.net.URLDecoder;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Test;
@@ -72,5 +76,17 @@ public class StoreTest {
 			log.debug(e);
 			throw e;
 		}
+	}
+	
+	@Test
+	public void testLoad() throws Throwable {
+		URL fileName = getClass().getResource("/test.ttl");
+		
+		File f = new File(URLDecoder.decode(fileName.getFile(), "UTF-8"));
+		
+		log.debug("testing: loading: " + fileName);
+		
+		SimpleRDFStore store = new SimpleRDFStore(1);
+		store.load(f);
 	}
 }

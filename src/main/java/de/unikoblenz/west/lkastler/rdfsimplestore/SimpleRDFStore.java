@@ -1,5 +1,10 @@
 package de.unikoblenz.west.lkastler.rdfsimplestore;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Arrays;
 
 import org.apache.logging.log4j.LogManager;
@@ -61,6 +66,39 @@ public class SimpleRDFStore {
 		
 		for(String t : triples) {
 			store.add(Parser.parseTriple(t));
+		}
+	}
+	
+	/**
+	 * loads the given file into the store.
+	 * @param fileName - name of the file with triples.
+	 * @throws FileNotFoundException - thrown if given file could not be found.
+	 * @throws StorageException - thrown if a triple could not be stored.
+	 * @throws ParsingException - thrown if a String represented RDF triple could not be parsed
+	 */
+	public void load(String fileName) throws FileNotFoundException, StorageException, ParsingException {
+		load(new File(fileName));
+	}
+	
+	/**
+	 * loads the given file into the store.
+	 * @param fileName - name of the file with triples.
+	 * @throws FileNotFoundException - thrown if given file could not be found.
+	 * @throws StorageException - thrown if a triple could not be stored.
+	 * @throws ParsingException - thrown if a String represented RDF triple could not be parsed
+	 */
+	public void load(File file) throws FileNotFoundException, StorageException, ParsingException {
+		log.info("loading: " + file.getName());
+		
+		BufferedReader read = new BufferedReader(new FileReader(file));
+		
+		String s;
+		try {
+			while((s = read.readLine()) != null) {
+				add(s);
+			}
+		} catch(IOException e) {
+			log.error(e);
 		}
 	}
 	

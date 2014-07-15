@@ -5,5 +5,4 @@ package de.unikoblenz.west.lkastler.rdfsimplestore.storage;
  * @author lkastler
  *
  */
-public interface DistributedStorage extends Storage {
-}
+public interface DistributedStorage extends Storage {}

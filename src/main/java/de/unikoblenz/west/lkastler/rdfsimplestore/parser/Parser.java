@@ -23,12 +23,12 @@ public abstract class Parser {
 	 * allowed Term pattern
 	 * TODO: currently only simple terms allowed!
 	 */
-	private static String TERM_PATTERN = "[a-zA-Z]+";
+	private static String TERM_PATTERN = "[a-zA-Z0-9]+";
 		
 	/**
 	 * allowed Triple pattern
 	 */
-	private static String TRIPLE_PATTERN = "^\\s*(" + TERM_PATTERN + "\\s*){3}$";
+	private static String TRIPLE_PATTERN = "^\\s*(" + TERM_PATTERN + "\\s*){3}(\\.)?$";
 	
 	/**
 	 * parses a String representation of a BGP to a Query object.
@@ -59,7 +59,7 @@ public abstract class Parser {
 	
 	/**
 	 * parses a String representation of a triple and creates a Triple object.
-	 * The representation has the following syntax: <code>"&lt;subject&gt; "&lt;predicate&gt; "&lt;object&gt;"</code>
+	 * The representation has the following syntax: <code>"&lt;subject&gt; "&lt;predicate&gt; "&lt;object&gt;[.]"</code>
 	 * 
 	 * @param triple - String representation of a Triple.
 	 * @return the corresponding Triple to the given String representation.
@@ -68,13 +68,15 @@ public abstract class Parser {
 	public static Triple parseTriple(String triple) throws ParsingException {
 		Pattern triplePattern = Pattern.compile(TRIPLE_PATTERN, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
 		
+		triple = triple.trim();
+		
 		Matcher match = triplePattern.matcher(triple);
 		
 		if(!match.matches()) {
 			throw new ParsingException("mal-formed triple: " + triple);
 		}
 		
-		String[] tokens = triple.trim().split(" ");
+		String[] tokens = triple.split(" ");
 		
 		return (new Triple(tokens[0].trim(), tokens[1].trim(), tokens[2].trim()));
 	}
