@@ -119,6 +119,6 @@ public class SimpleQueryEngine implements QueryEngine {
 	 */
 	@Override
 	public String toString() {
-		return "SimpleQueryEngine";
+		return "SimpleQueryEngine[" + Long.toString(getId()) + "]";
 	}
 }

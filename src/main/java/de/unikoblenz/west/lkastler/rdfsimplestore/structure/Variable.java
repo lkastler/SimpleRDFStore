@@ -1,7 +1,9 @@
 package de.unikoblenz.west.lkastler.rdfsimplestore.structure;
 
 /**
+ * defines a variable in the query.
  * 
+ * @see de.unikoblenz.west.lkastler.rdfsimplestore.query.Query
  * 
  * @author lkastler
  */
